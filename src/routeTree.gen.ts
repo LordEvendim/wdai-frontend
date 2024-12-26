@@ -17,11 +17,25 @@ import { Route as ProductsProductIdImport } from './routes/products/$productId'
 
 // Create Virtual Routes
 
+const RegisterLazyImport = createFileRoute('/register')()
+const LoginLazyImport = createFileRoute('/login')()
 const CartLazyImport = createFileRoute('/cart')()
 const AboutLazyImport = createFileRoute('/about')()
 const IndexLazyImport = createFileRoute('/')()
 
 // Create/Update Routes
+
+const RegisterLazyRoute = RegisterLazyImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/register.lazy').then((d) => d.Route))
+
+const LoginLazyRoute = LoginLazyImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/login.lazy').then((d) => d.Route))
 
 const CartLazyRoute = CartLazyImport.update({
   id: '/cart',
@@ -72,6 +86,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CartLazyImport
       parentRoute: typeof rootRoute
     }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterLazyImport
+      parentRoute: typeof rootRoute
+    }
     '/products/$productId': {
       id: '/products/$productId'
       path: '/products/$productId'
@@ -88,6 +116,8 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
   '/about': typeof AboutLazyRoute
   '/cart': typeof CartLazyRoute
+  '/login': typeof LoginLazyRoute
+  '/register': typeof RegisterLazyRoute
   '/products/$productId': typeof ProductsProductIdRoute
 }
 
@@ -95,6 +125,8 @@ export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
   '/about': typeof AboutLazyRoute
   '/cart': typeof CartLazyRoute
+  '/login': typeof LoginLazyRoute
+  '/register': typeof RegisterLazyRoute
   '/products/$productId': typeof ProductsProductIdRoute
 }
 
@@ -103,15 +135,30 @@ export interface FileRoutesById {
   '/': typeof IndexLazyRoute
   '/about': typeof AboutLazyRoute
   '/cart': typeof CartLazyRoute
+  '/login': typeof LoginLazyRoute
+  '/register': typeof RegisterLazyRoute
   '/products/$productId': typeof ProductsProductIdRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/cart' | '/products/$productId'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/cart'
+    | '/login'
+    | '/register'
+    | '/products/$productId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/cart' | '/products/$productId'
-  id: '__root__' | '/' | '/about' | '/cart' | '/products/$productId'
+  to: '/' | '/about' | '/cart' | '/login' | '/register' | '/products/$productId'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/cart'
+    | '/login'
+    | '/register'
+    | '/products/$productId'
   fileRoutesById: FileRoutesById
 }
 
@@ -119,6 +166,8 @@ export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
   AboutLazyRoute: typeof AboutLazyRoute
   CartLazyRoute: typeof CartLazyRoute
+  LoginLazyRoute: typeof LoginLazyRoute
+  RegisterLazyRoute: typeof RegisterLazyRoute
   ProductsProductIdRoute: typeof ProductsProductIdRoute
 }
 
@@ -126,6 +175,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
   AboutLazyRoute: AboutLazyRoute,
   CartLazyRoute: CartLazyRoute,
+  LoginLazyRoute: LoginLazyRoute,
+  RegisterLazyRoute: RegisterLazyRoute,
   ProductsProductIdRoute: ProductsProductIdRoute,
 }
 
@@ -142,6 +193,8 @@ export const routeTree = rootRoute
         "/",
         "/about",
         "/cart",
+        "/login",
+        "/register",
         "/products/$productId"
       ]
     },
@@ -153,6 +206,12 @@ export const routeTree = rootRoute
     },
     "/cart": {
       "filePath": "cart.lazy.tsx"
+    },
+    "/login": {
+      "filePath": "login.lazy.tsx"
+    },
+    "/register": {
+      "filePath": "register.lazy.tsx"
     },
     "/products/$productId": {
       "filePath": "products/$productId.tsx"

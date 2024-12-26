@@ -23,7 +23,7 @@ export const NavigationBar: React.FC<NavigationBarProps> = ({}) => {
           Simple Shop
         </Box>
         <HStack gap={"20px"}>
-          <Button>Login</Button>
+          <Button onClick={() => navigate({ to: "/login" })}>Login</Button>
           <Button variant={"ghost"} onClick={() => navigate({ to: "/cart" })}>
             <MdOutlineShoppingCart size={"16px"} />
             {items.length > 0 && (
