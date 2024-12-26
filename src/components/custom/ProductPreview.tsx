@@ -38,7 +38,7 @@ export const ProductPreview: React.FC<ProductPreviewProps> = ({
       <Box fontSize={"sm"} color={"gray.700"} mt={"10px"}>
         {description}
       </Box>
-      <Button onClick={() => navigate({ to: `/product/${id}` })} mt={"10px"}>
+      <Button onClick={() => navigate({ to: `/products/${id}` })} mt={"10px"}>
         Details
       </Button>
     </Box>
