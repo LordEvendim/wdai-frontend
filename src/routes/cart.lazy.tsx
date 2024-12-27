@@ -9,6 +9,7 @@ export const Route = createLazyFileRoute("/cart")({
 
 function RouteComponent() {
   const items = useCart((state) => state.items);
+  const removeItem = useCart((state) => state.removeItem);
 
   return (
     <Box w={"60%"} mx={"auto"} mt={"50px"}>
@@ -29,7 +30,11 @@ function RouteComponent() {
                 {item.price} x {item.quantity}
               </Box>
               <Box fontWeight={"bold"}>{item.quantity * item.price}$</Box>
-              <Button variant={"outline"} ml={"10px"}>
+              <Button
+                variant={"outline"}
+                ml={"10px"}
+                onClick={() => removeItem(item.id)}
+              >
                 <IoMdTrash size={"10px"} />
               </Button>
             </HStack>

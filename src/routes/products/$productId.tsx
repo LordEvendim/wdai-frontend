@@ -1,4 +1,4 @@
-import { Box, Button, HStack, Input } from "@chakra-ui/react";
+import { Box, Button, HStack, Input, Textarea } from "@chakra-ui/react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 
@@ -10,13 +10,25 @@ export const Route = createFileRoute("/products/$productId")({
 // do koszyka
 
 const maxAvailable = 10;
+const reviewsData = [
+  {
+    id: 1,
+    author: "John Doe",
+    content: "Great product, I love it!",
+  },
+  {
+    id: 2,
+    author: "Jack Doe",
+    content: "I don't like it",
+  },
+];
 
 function RouteComponent() {
   const { productId } = Route.useParams();
   const [quantity, setQuantity] = useState(1);
 
   const handleChangeQuantity = (value: number) => {
-    setQuantity(Math.max(Math.max(0, value), maxAvailable));
+    setQuantity(Math.min(Math.max(1, value), maxAvailable));
   };
 
   return (
@@ -34,9 +46,9 @@ function RouteComponent() {
         of Lorem Ipsum.
       </Box>
       <Box
-        w={"80%"}
+        w={"full"}
         mx={"auto"}
-        borderColor={"gray.200"}
+        borderColor={"gray.100"}
         borderWidth={"1px"}
         mt={5}
       />
@@ -57,6 +69,43 @@ function RouteComponent() {
           </Box>
           <Button>Add to cart</Button>
         </HStack>
+      </Box>
+      <Box
+        w={"full"}
+        mx={"auto"}
+        borderColor={"gray.100"}
+        borderWidth={"1px"}
+        mt={5}
+      />
+      <Box
+        fontSize={"xl"}
+        mt={"20px"}
+        ml={"5px"}
+        fontWeight={"bold"}
+        color={"gray.300"}
+      >
+        Reviews
+      </Box>
+      {reviewsData.map((review) => (
+        <Box
+          key={review.id}
+          mt={"10px"}
+          boxShadow={"xs"}
+          p={"10px"}
+          borderRadius={"10px"}
+        >
+          <Box fontSize={"xs"} color={"gray.300"}>
+            {review.author}
+          </Box>
+          <Box>{review.content}</Box>
+        </Box>
+      ))}
+      <Box mt={"20px"}>
+        <Box color={"gray.400"} fontSize={"sm"}>
+          Your review
+        </Box>
+        <Textarea />
+        <Button mt={"10px"}>Submit</Button>
       </Box>
     </Box>
   );

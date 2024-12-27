@@ -1,6 +1,6 @@
 import { useCart } from "@/hooks/useCart";
 import { Box, Button, Flex, HStack } from "@chakra-ui/react";
-import { useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import React from "react";
 import { MdOutlineShoppingCart } from "react-icons/md";
 
@@ -20,7 +20,7 @@ export const NavigationBar: React.FC<NavigationBarProps> = ({}) => {
         mx={"auto"}
       >
         <Box fontWeight={"black"} color={"gray.800"}>
-          Simple Shop
+          <Link to={"/"}>Simple Shop</Link>
         </Box>
         <HStack gap={"20px"}>
           <Button onClick={() => navigate({ to: "/login" })}>Login</Button>
