@@ -38,12 +38,19 @@ export const NavigationBar: React.FC<NavigationBarProps> = ({}) => {
         </Box>
         <HStack gap={"20px"}>
           {isLoading && <Spinner />}
+
           {session ? (
             <>
               <Button
                 variant={"ghost"}
                 onClick={() => navigate({ to: "/cart" })}
               >
+                <Button
+                  onClick={() => navigate({ to: "/orders" })}
+                  variant={"ghost"}
+                >
+                  Orders
+                </Button>
                 <MdOutlineShoppingCart size={"16px"} />
                 {items.length > 0 && (
                   <Box

@@ -15,6 +15,7 @@ export const useLogout = () => {
   const { mutate, isPending } = useMutation({
     mutationFn: logout,
     onSuccess: () => {
+      axios.defaults.headers.Authorization = "";
       queryClient.resetQueries({ queryKey: [QueryKey.Session] });
     },
   });

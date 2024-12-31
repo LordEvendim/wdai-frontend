@@ -18,6 +18,7 @@ import { Route as ProductsProductIdImport } from './routes/products/$productId'
 // Create Virtual Routes
 
 const RegisterLazyImport = createFileRoute('/register')()
+const OrdersLazyImport = createFileRoute('/orders')()
 const LoginLazyImport = createFileRoute('/login')()
 const CartLazyImport = createFileRoute('/cart')()
 const AboutLazyImport = createFileRoute('/about')()
@@ -30,6 +31,12 @@ const RegisterLazyRoute = RegisterLazyImport.update({
   path: '/register',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/register.lazy').then((d) => d.Route))
+
+const OrdersLazyRoute = OrdersLazyImport.update({
+  id: '/orders',
+  path: '/orders',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/orders.lazy').then((d) => d.Route))
 
 const LoginLazyRoute = LoginLazyImport.update({
   id: '/login',
@@ -93,6 +100,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginLazyImport
       parentRoute: typeof rootRoute
     }
+    '/orders': {
+      id: '/orders'
+      path: '/orders'
+      fullPath: '/orders'
+      preLoaderRoute: typeof OrdersLazyImport
+      parentRoute: typeof rootRoute
+    }
     '/register': {
       id: '/register'
       path: '/register'
@@ -117,6 +131,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutLazyRoute
   '/cart': typeof CartLazyRoute
   '/login': typeof LoginLazyRoute
+  '/orders': typeof OrdersLazyRoute
   '/register': typeof RegisterLazyRoute
   '/products/$productId': typeof ProductsProductIdRoute
 }
@@ -126,6 +141,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutLazyRoute
   '/cart': typeof CartLazyRoute
   '/login': typeof LoginLazyRoute
+  '/orders': typeof OrdersLazyRoute
   '/register': typeof RegisterLazyRoute
   '/products/$productId': typeof ProductsProductIdRoute
 }
@@ -136,6 +152,7 @@ export interface FileRoutesById {
   '/about': typeof AboutLazyRoute
   '/cart': typeof CartLazyRoute
   '/login': typeof LoginLazyRoute
+  '/orders': typeof OrdersLazyRoute
   '/register': typeof RegisterLazyRoute
   '/products/$productId': typeof ProductsProductIdRoute
 }
@@ -147,16 +164,25 @@ export interface FileRouteTypes {
     | '/about'
     | '/cart'
     | '/login'
+    | '/orders'
     | '/register'
     | '/products/$productId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/cart' | '/login' | '/register' | '/products/$productId'
+  to:
+    | '/'
+    | '/about'
+    | '/cart'
+    | '/login'
+    | '/orders'
+    | '/register'
+    | '/products/$productId'
   id:
     | '__root__'
     | '/'
     | '/about'
     | '/cart'
     | '/login'
+    | '/orders'
     | '/register'
     | '/products/$productId'
   fileRoutesById: FileRoutesById
@@ -167,6 +193,7 @@ export interface RootRouteChildren {
   AboutLazyRoute: typeof AboutLazyRoute
   CartLazyRoute: typeof CartLazyRoute
   LoginLazyRoute: typeof LoginLazyRoute
+  OrdersLazyRoute: typeof OrdersLazyRoute
   RegisterLazyRoute: typeof RegisterLazyRoute
   ProductsProductIdRoute: typeof ProductsProductIdRoute
 }
@@ -176,6 +203,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutLazyRoute: AboutLazyRoute,
   CartLazyRoute: CartLazyRoute,
   LoginLazyRoute: LoginLazyRoute,
+  OrdersLazyRoute: OrdersLazyRoute,
   RegisterLazyRoute: RegisterLazyRoute,
   ProductsProductIdRoute: ProductsProductIdRoute,
 }
@@ -194,6 +222,7 @@ export const routeTree = rootRoute
         "/about",
         "/cart",
         "/login",
+        "/orders",
         "/register",
         "/products/$productId"
       ]
@@ -209,6 +238,9 @@ export const routeTree = rootRoute
     },
     "/login": {
       "filePath": "login.lazy.tsx"
+    },
+    "/orders": {
+      "filePath": "orders.lazy.tsx"
     },
     "/register": {
       "filePath": "register.lazy.tsx"

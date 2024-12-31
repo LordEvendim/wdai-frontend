@@ -1,5 +1,9 @@
+import { Button } from "@/components/ui/button";
+import { toaster } from "@/components/ui/toaster";
+import { useCreateOrder } from "@/hooks/api/useCreateOrder";
+import { useSession } from "@/hooks/api/useSession";
 import { useCart } from "@/hooks/useCart";
-import { Box, Button, HStack, Separator } from "@chakra-ui/react";
+import { Box, HStack, Separator } from "@chakra-ui/react";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { IoMdTrash } from "react-icons/io";
 
@@ -10,6 +14,44 @@ export const Route = createLazyFileRoute("/cart")({
 function RouteComponent() {
   const items = useCart((state) => state.items);
   const removeItem = useCart((state) => state.removeItem);
+  const { createOrder, isPending } = useCreateOrder();
+  const { session } = useSession();
+
+  const handleCreateOrder = () => {
+    if (!session) {
+      return toaster.create({
+        title: "Unauthorized",
+        description: "You need to login to create an order",
+        type: "error",
+      });
+    }
+
+    createOrder(
+      {
+        products: items.map((item) => ({
+          product_id: item.id,
+          quantity: item.quantity,
+        })),
+        userId: session.id,
+      },
+      {
+        onSuccess: () => {
+          toaster.create({
+            title: "Order created",
+            description: "Your order has been created successfully",
+            type: "success",
+          });
+        },
+        onError: () => {
+          toaster.create({
+            title: "Order failed",
+            description: "Failed to create order",
+            type: "error",
+          });
+        },
+      }
+    );
+  };
 
   return (
     <Box w={"60%"} mx={"auto"} mt={"50px"}>
@@ -54,7 +96,9 @@ function RouteComponent() {
             $
           </Box>
         </HStack>
-        <Button>Checkout</Button>
+        <Button onClick={() => handleCreateOrder()} loading={isPending}>
+          Checkout
+        </Button>
       </HStack>
     </Box>
   );
