@@ -42,15 +42,15 @@ export const NavigationBar: React.FC<NavigationBarProps> = ({}) => {
           {session ? (
             <>
               <Button
+                onClick={() => navigate({ to: "/orders" })}
+                variant={"ghost"}
+              >
+                Orders
+              </Button>
+              <Button
                 variant={"ghost"}
                 onClick={() => navigate({ to: "/cart" })}
               >
-                <Button
-                  onClick={() => navigate({ to: "/orders" })}
-                  variant={"ghost"}
-                >
-                  Orders
-                </Button>
                 <MdOutlineShoppingCart size={"16px"} />
                 {items.length > 0 && (
                   <Box

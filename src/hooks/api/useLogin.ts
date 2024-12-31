@@ -15,6 +15,7 @@ const login = async ({ username, password }: FetchParams) => {
     password,
   });
 
+  console.log("setting token");
   axios.defaults.headers.common["Authorization"] =
     `Bearer ${result.data.accessToken}`;
 

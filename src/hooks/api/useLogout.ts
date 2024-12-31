@@ -15,6 +15,7 @@ export const useLogout = () => {
   const { mutate, isPending } = useMutation({
     mutationFn: logout,
     onSuccess: () => {
+      document.cookie = "jwt=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
       axios.defaults.headers.Authorization = "";
       queryClient.resetQueries({ queryKey: [QueryKey.Session] });
     },

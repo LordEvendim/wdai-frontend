@@ -14,8 +14,8 @@ const register = async ({ username, password, email, role }: FetchParams) => {
   const result = await axios.post(`${API_URL}/auth/register`, {
     username,
     password,
-    role,
     email,
+    role,
   });
 
   return result.data;

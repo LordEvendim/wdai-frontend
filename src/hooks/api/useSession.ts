@@ -12,11 +12,11 @@ export interface UserSession {
 }
 
 const fetchSession = async () => {
-  console.log("fetching session");
-
   const result = await axios.get<
     { message: string; user: UserSession } | undefined
   >(`${API_URL}/auth/`);
+
+  console.log(result.data?.user);
 
   return result.data?.user;
 };

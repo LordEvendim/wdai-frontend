@@ -21,7 +21,6 @@ const fetchData = async (productId: number) => {
 export const useGetProdcutComments = (productId: number) => {
   const { data, isLoading } = useQuery({
     queryKey: [QueryKey.Comments, productId],
-    staleTime: 0,
     queryFn: () => fetchData(productId),
   });
 
