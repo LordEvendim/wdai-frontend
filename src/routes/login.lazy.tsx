@@ -1,6 +1,8 @@
+import { Button } from "@/components/ui/button";
 import { toaster } from "@/components/ui/toaster";
-import { Box, Input, Button, VStack, Flex } from "@chakra-ui/react";
-import { createLazyFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useLogin } from "@/hooks/api/useLogin";
+import { Box, Input, VStack, Flex } from "@chakra-ui/react";
+import { createLazyFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 
 export const Route = createLazyFileRoute("/login")({
@@ -8,22 +10,15 @@ export const Route = createLazyFileRoute("/login")({
 });
 
 function RouteComponent() {
-  const [email, setEmail] = useState("");
+  const { isPending, login } = useLogin();
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
   const handleLogin = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
 
-    if (!email.includes("@") || !email.includes(".")) {
-      return toaster.create({
-        type: "error",
-        title: "Invalid email",
-        description: "Please enter a valid email",
-      });
-    }
-
-    if (!email || !password) {
+    if (!username || !password) {
       return toaster.create({
         type: "error",
         title: "Invliad credentials",
@@ -31,13 +26,26 @@ function RouteComponent() {
       });
     }
 
-    console.log(email, password);
-    toaster.create({
-      type: "success",
-      title: "Valid credentails",
-      description: email + " " + password,
-    });
-    navigate({ to: "/" });
+    login(
+      { username, password },
+      {
+        onError: () => {
+          toaster.create({
+            type: "error",
+            title: "Invalid credentials",
+            description: "Please enter valid credentials",
+          });
+        },
+        onSuccess: () => {
+          toaster.create({
+            type: "success",
+            title: "Valid credentails",
+            description: "Logged in successfully",
+          });
+          navigate({ to: "/" });
+        },
+      }
+    );
   };
 
   return (
@@ -54,12 +62,11 @@ function RouteComponent() {
       <VStack gap={"20px"} w={"full"}>
         <Box w={"full"}>
           <Box fontSize={"sm"} ml={"5px"} mb={"2px"}>
-            Email
+            Username
           </Box>
           <Input
-            value={email}
-            type="email"
-            onChange={(e) => setEmail(e.target.value)}
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
           />
         </Box>
         <Box w={"full"}>
@@ -77,6 +84,7 @@ function RouteComponent() {
           colorScheme="teal"
           width="full"
           onClick={(e) => handleLogin(e)}
+          loading={isPending}
         >
           Login
         </Button>

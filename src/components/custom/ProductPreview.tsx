@@ -32,11 +32,18 @@ export const ProductPreview: React.FC<ProductPreviewProps> = ({
         w={"full"}
       />
       <HStack justify={"space-between"} mt={"10px"}>
-        <Box fontWeight={"bold"}>{name}</Box>
-        <Box>{price}$</Box>
+        <Box
+          fontWeight={"bold"}
+          fontSize={"sm"}
+          height={"40px"}
+          overflow={"hidden"}
+        >
+          {name}
+        </Box>
+        <Box fontSize={"smaller"}>{price}$</Box>
       </HStack>
-      <Box fontSize={"sm"} color={"gray.700"} mt={"10px"}>
-        {description}
+      <Box fontSize={"sm"} color={"gray.700"} mt={"10px"} h={"50px"}>
+        {[...description.slice(0, 50), "..."].join("")}
       </Box>
       <Button onClick={() => navigate({ to: `/products/${id}` })} mt={"10px"}>
         Details

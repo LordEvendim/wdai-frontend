@@ -48,7 +48,10 @@ function RouteComponent() {
             Total
           </Box>
           <Box fontWeight={"bold"} fontSize={"xl"}>
-            {items.reduce((acc, item) => acc + item.quantity * item.price, 0)}$
+            {items
+              .reduce((acc, item) => acc + item.quantity * item.price, 0)
+              .toFixed(2)}
+            $
           </Box>
         </HStack>
         <Button>Checkout</Button>

@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 interface CartItem {
   id: number;
@@ -14,44 +15,31 @@ interface CartState {
   clearCart: () => void;
 }
 
-export const useCart = create<CartState>((set) => ({
-  items: [
-    {
-      id: 1,
-      name: "Product 1",
-      price: 100,
-      quantity: 1,
-    },
-    {
-      id: 2,
-      name: "Product 2",
-      price: 500,
-      quantity: 3,
-    },
-    {
-      id: 3,
-      name: "Product 3",
-      price: 120,
-      quantity: 1,
-    },
-  ],
-  addItem: (item) =>
-    set((state) => {
-      const existingItem = state.items.find((i) => i.id === item.id);
-      if (existingItem) {
-        return {
-          items: state.items.map((i) =>
-            i.id === item.id
-              ? { ...i, quantity: i.quantity + item.quantity }
-              : i
-          ),
-        };
-      }
-      return { items: [...state.items, item] };
+export const useCart = create<CartState>()(
+  persist(
+    (set) => ({
+      items: [],
+      addItem: (item) =>
+        set((state) => {
+          const existingItem = state.items.find((i) => i.id === item.id);
+          if (existingItem) {
+            return {
+              items: state.items.map((i) =>
+                i.id === item.id
+                  ? { ...i, quantity: i.quantity + item.quantity }
+                  : i
+              ),
+            };
+          }
+
+          return { items: [...state.items, item] };
+        }),
+      removeItem: (id) =>
+        set((state) => ({
+          items: state.items.filter((item) => item.id !== id),
+        })),
+      clearCart: () => set({ items: [] }),
     }),
-  removeItem: (id) =>
-    set((state) => ({
-      items: state.items.filter((item) => item.id !== id),
-    })),
-  clearCart: () => set({ items: [] }),
-}));
+    { name: "cart" }
+  )
+);

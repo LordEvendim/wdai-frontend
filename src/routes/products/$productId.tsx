@@ -1,49 +1,134 @@
-import { Box, Button, HStack, Input, Textarea } from "@chakra-ui/react";
+import { Button } from "@/components/ui/button";
+import { toaster } from "@/components/ui/toaster";
+import { useDeleteComment } from "@/hooks/api/useDeleteComment";
+import { useGetProduct } from "@/hooks/api/useGetProduct";
+import { useGetProdcutComments } from "@/hooks/api/useGetProductComments";
+import { usePostComments } from "@/hooks/api/usePostComment";
+import { useSession } from "@/hooks/api/useSession";
+import { useCart } from "@/hooks/useCart";
+import {
+  Box,
+  Center,
+  HStack,
+  Input,
+  Spinner,
+  Textarea,
+} from "@chakra-ui/react";
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { FiTrash2 } from "react-icons/fi";
 
 export const Route = createFileRoute("/products/$productId")({
   component: RouteComponent,
 });
 
-// nazwa, opis, funkcje, dostępa ilość, input ilości + przycisk dodania
-// do koszyka
-
-const maxAvailable = 10;
-const reviewsData = [
-  {
-    id: 1,
-    author: "John Doe",
-    content: "Great product, I love it!",
-  },
-  {
-    id: 2,
-    author: "Jack Doe",
-    content: "I don't like it",
-  },
-];
-
 function RouteComponent() {
   const { productId } = Route.useParams();
+  const [comment, setComment] = useState("");
+  const { isLoading, product } = useGetProduct(productId);
+  const { isLoading: isLoadingComments, comments } =
+    useGetProdcutComments(productId);
+  const { session } = useSession();
+  const { isPending: isDeletingComment, deleteComment } = useDeleteComment();
+
   const [quantity, setQuantity] = useState(1);
 
-  const handleChangeQuantity = (value: number) => {
-    setQuantity(Math.min(Math.max(1, value), maxAvailable));
+  const addToCart = useCart((state) => state.addItem);
+  const removeFromCart = useCart((state) => state.removeItem);
+  const { isPending, postComment } = usePostComments(productId);
+
+  const handleRemoveComment = (commentId: number) => {
+    if (!session) return;
+
+    deleteComment(
+      {
+        commentId: commentId,
+        prodcutId: productId,
+      },
+      {
+        onError: () => {
+          toaster.create({
+            title: "Failed to delete comment",
+            type: "error",
+          });
+        },
+        onSuccess: () => {
+          toaster.create({
+            title: "Comment deleted",
+            type: "success",
+          });
+        },
+      }
+    );
   };
+
+  const handleChangeQuantity = (value: number) => {
+    setQuantity(Math.min(Math.max(1, value), product?.units_in_stock ?? 0));
+  };
+  const handleAddToCart = () => {
+    if (!product) return;
+
+    removeFromCart(product.product_id);
+    addToCart({
+      id: product.product_id,
+      name: product.name,
+      price: product.price,
+      quantity,
+    });
+
+    toaster.create({
+      title: "Item added to cart",
+      type: "success",
+    });
+  };
+
+  const handlePostComment = () => {
+    if (!product) return;
+
+    postComment(
+      {
+        prodcutId: product.product_id,
+        text: comment,
+      },
+      {
+        onSuccess: () => {
+          toaster.create({
+            title: "Comment posted",
+            type: "success",
+          });
+          setComment("");
+        },
+        onError: () => {
+          toaster.create({
+            title: "Failed to post comment",
+            type: "error",
+          });
+        },
+      }
+    );
+  };
+
+  useEffect(() => {
+    console.log(session);
+    console.log(comments);
+  }, [session]);
+
+  if (isLoading) {
+    return (
+      <Center>
+        <Spinner />
+      </Center>
+    );
+  }
 
   return (
     <Box w={"60%"} mx={"auto"} mt={10}>
-      <Box fontSize={"2xl"}>Product {productId}</Box>
+      <Box fontSize={"2xl"}>{product?.name}</Box>
+      <Box fontSize={"xl"} color={"gray.400"}>
+        {product?.price}$
+      </Box>
       <Box fontSize={"md"} color={"gray.500"} mt={5}>
-        Lorem Ipsum is simply dummy text of the printing and typesetting
-        industry. Lorem Ipsum has been the industry's standard dummy text ever
-        since the 1500s, when an unknown printer took a galley of type and
-        scrambled it to make a type specimen book. It has survived not only five
-        centuries, but also the leap into electronic typesetting, remaining
-        essentially unchanged. It was popularised in the 1960s with the release
-        of Letraset sheets containing Lorem Ipsum passages, and more recently
-        with desktop publishing software like Aldus PageMaker including versions
-        of Lorem Ipsum.
+        {product?.description}
       </Box>
       <Box
         w={"full"}
@@ -54,7 +139,7 @@ function RouteComponent() {
       />
       <Box>
         <Box fontSize={"sm"} color={"gray.500"} mt={5} mb={"5px"}>
-          Quantity ({maxAvailable} available)
+          Quantity ({product?.units_in_stock ?? 0} available)
         </Box>
         <HStack>
           <Box>
@@ -67,7 +152,7 @@ function RouteComponent() {
               }
             />
           </Box>
-          <Button>Add to cart</Button>
+          <Button onClick={() => handleAddToCart()}>Add to cart</Button>
         </HStack>
       </Box>
       <Box
@@ -86,26 +171,51 @@ function RouteComponent() {
       >
         Reviews
       </Box>
-      {reviewsData.map((review) => (
+      {isLoadingComments && <Spinner />}
+      {comments?.map((comment) => (
         <Box
-          key={review.id}
+          key={comment.comment_id}
           mt={"10px"}
           boxShadow={"xs"}
           p={"10px"}
           borderRadius={"10px"}
+          position={"relative"}
         >
           <Box fontSize={"xs"} color={"gray.300"}>
-            {review.author}
+            {comment.user_id}
           </Box>
-          <Box>{review.content}</Box>
+          <Box>{comment.body}</Box>
+          {session &&
+            (comment.user_id === session.id || session.role === "admin") && (
+              <Button
+                position={"absolute"}
+                right={"10px"}
+                top={"12px"}
+                variant={"ghost"}
+                color={"gray.500"}
+                onClick={() => handleRemoveComment(comment.comment_id)}
+                loading={isDeletingComment}
+              >
+                <FiTrash2 size={"10px"} />
+              </Button>
+            )}
         </Box>
       ))}
       <Box mt={"20px"}>
         <Box color={"gray.400"} fontSize={"sm"}>
           Your review
         </Box>
-        <Textarea />
-        <Button mt={"10px"}>Submit</Button>
+        <Textarea
+          onChange={(e) => setComment(e.target.value)}
+          value={comment}
+        />
+        <Button
+          mt={"10px"}
+          loading={isPending}
+          onClick={() => handlePostComment()}
+        >
+          Submit
+        </Button>
       </Box>
     </Box>
   );
