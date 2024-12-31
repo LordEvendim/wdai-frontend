@@ -108,11 +108,6 @@ function RouteComponent() {
     );
   };
 
-  useEffect(() => {
-    console.log(session);
-    console.log(comments);
-  }, [session]);
-
   if (isLoading) {
     return (
       <Center>
