@@ -5,19 +5,17 @@ import axios from "axios";
 import { useSession } from "./useSession";
 
 export interface OrderDetails {
-  order_id: number;
-  order_details_id: number;
-  user_id: number;
-  product_id: number;
+  orderId: number;
+  productId: number;
   quantity: number;
+  productName: string;
+  price: number;
 }
 
 const fetchData = async (userId: number) => {
-  const { data } = await axios.get<OrderDetails[]>(`${API_URL}/orders`, {
-    params: {
-      user_id: userId,
-    },
-  });
+  const { data } = await axios.get<OrderDetails[]>(
+    `${API_URL}/orders/users/${userId}`
+  );
 
   return data;
 };

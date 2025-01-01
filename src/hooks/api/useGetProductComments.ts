@@ -11,7 +11,7 @@ export interface Comment {
 }
 
 const fetchData = async (productId: number) => {
-  const { data } = await axios.get<Comment[]>(
+  const { data } = await axios.get<(Comment & { username: string })[]>(
     `${API_URL}/comments/product/${productId}`
   );
 

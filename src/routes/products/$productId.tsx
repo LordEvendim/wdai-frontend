@@ -15,7 +15,7 @@ import {
   Textarea,
 } from "@chakra-ui/react";
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { FiTrash2 } from "react-icons/fi";
 
 export const Route = createFileRoute("/products/$productId")({
@@ -177,7 +177,7 @@ function RouteComponent() {
           position={"relative"}
         >
           <Box fontSize={"xs"} color={"gray.300"}>
-            {comment.user_id}
+            {comment.username}
           </Box>
           <Box>{comment.body}</Box>
           {session &&
