@@ -1,6 +1,6 @@
 import { NavigationBar } from "@/components/custom/NavigationBar";
-import { Toaster } from "@/components/ui/toaster";
-import { useSession } from "@/hooks/api/useSession";
+import { toaster, Toaster } from "@/components/ui/toaster";
+import { useRefreshToken } from "@/hooks/api/useRefreshToken";
 import { Box } from "@chakra-ui/react";
 import { createRootRoute, Outlet, useNavigate } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
@@ -8,14 +8,25 @@ import { useEffect } from "react";
 
 export const Route = createRootRoute({
   component: () => {
-    const { session, isLoading } = useSession();
     const navigate = useNavigate();
+    const { refresh } = useRefreshToken();
 
     useEffect(() => {
-      if (!session && !isLoading) {
-        navigate({ to: "/login" });
-      }
-    }, [session, isLoading]);
+      refresh(undefined, {
+        onSuccess: () => {
+          toaster.create({
+            title: "Success",
+            description: "Session refreshed",
+            type: "success",
+          });
+
+          navigate({ to: "/" });
+        },
+        onError: () => {
+          navigate({ to: "/login" });
+        },
+      });
+    }, []);
 
     return (
       <>

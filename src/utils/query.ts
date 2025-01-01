@@ -3,4 +3,5 @@ export enum QueryKey {
   Comments = "Comments",
   Session = "Session",
   Orders = "Orders",
+  Token = "Token",
 }

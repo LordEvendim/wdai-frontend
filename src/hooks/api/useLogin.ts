@@ -10,10 +10,16 @@ interface FetchParams {
 }
 
 const login = async ({ username, password }: FetchParams) => {
-  const result = await axios.post(`${API_URL}/auth/login`, {
-    username,
-    password,
-  });
+  const result = await axios.post(
+    `${API_URL}/auth/login`,
+    {
+      username,
+      password,
+    },
+    {
+      withCredentials: true,
+    }
+  );
 
   console.log("setting token");
   axios.defaults.headers.common["Authorization"] =
