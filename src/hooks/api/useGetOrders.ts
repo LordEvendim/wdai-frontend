@@ -1,7 +1,9 @@
-import { API_URL } from "@/utils/api";
-import { QueryKey } from "@/utils/query";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+
+import { API_URL } from "@/utils/api";
+import { QueryKey } from "@/utils/query";
+
 import { useSession } from "./useSession";
 
 export interface OrderDetails {

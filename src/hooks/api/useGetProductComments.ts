@@ -1,7 +1,8 @@
-import { API_URL } from "@/utils/api";
-import { QueryKey } from "@/utils/query";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+
+import { API_URL } from "@/utils/api";
+import { QueryKey } from "@/utils/query";
 
 export interface Comment {
   comment_id: number;

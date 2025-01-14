@@ -1,9 +1,10 @@
+import { Box, Flex, Input, VStack } from "@chakra-ui/react";
+import { createLazyFileRoute, useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
+
 import { Button } from "@/components/ui/button";
 import { toaster } from "@/components/ui/toaster";
 import { useLogin } from "@/hooks/api/useLogin";
-import { Box, Input, VStack, Flex } from "@chakra-ui/react";
-import { createLazyFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
 
 export const Route = createLazyFileRoute("/login")({
   component: RouteComponent,
@@ -42,7 +43,7 @@ function RouteComponent() {
             title: "Valid credentails",
             description: "Logged in successfully",
           });
-          navigate({ to: "/" });
+          void navigate({ to: "/" });
         },
       }
     );
@@ -58,6 +59,7 @@ function RouteComponent() {
       borderWidth={"1px"}
       borderRadius="lg"
       boxShadow={"md"}
+      background={"white"}
     >
       <VStack gap={"20px"} w={"full"}>
         <Box w={"full"}>
@@ -95,12 +97,12 @@ function RouteComponent() {
           fontSize={"13px"}
           h={"20px"}
           color={"gray.400"}
-          onClick={() => navigate({ to: "/register" })}
+          onClick={() => void navigate({ to: "/register" })}
           p={0}
           ml={"5px"}
           mt={"8px"}
         >
-          I don't have an account
+          I don&apos;t have an account
         </Button>
       </Flex>
     </Box>

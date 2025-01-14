@@ -1,8 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-
 import axios from "axios";
+
 import { API_URL } from "@/utils/api";
 import { QueryKey } from "@/utils/query";
+
 import { useCart } from "../useCart";
 
 interface FetchParams {
@@ -33,7 +34,7 @@ export const useCreateOrder = () => {
     mutationFn: createOrder,
     onSuccess: () => {
       clearCart();
-      queryClient.resetQueries({ queryKey: [QueryKey.Orders] });
+      void queryClient.resetQueries({ queryKey: [QueryKey.Orders] });
     },
   });
 

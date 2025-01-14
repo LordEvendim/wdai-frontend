@@ -1,3 +1,16 @@
+import {
+  Box,
+  Center,
+  HStack,
+  Image,
+  Input,
+  Spinner,
+  Textarea,
+} from "@chakra-ui/react";
+import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
+import { FiTrash2 } from "react-icons/fi";
+
 import { Button } from "@/components/ui/button";
 import { toaster } from "@/components/ui/toaster";
 import { useDeleteComment } from "@/hooks/api/useDeleteComment";
@@ -6,17 +19,6 @@ import { useGetProdcutComments } from "@/hooks/api/useGetProductComments";
 import { usePostComments } from "@/hooks/api/usePostComment";
 import { useSession } from "@/hooks/api/useSession";
 import { useCart } from "@/hooks/useCart";
-import {
-  Box,
-  Center,
-  HStack,
-  Input,
-  Spinner,
-  Textarea,
-} from "@chakra-ui/react";
-import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
-import { FiTrash2 } from "react-icons/fi";
 
 export const Route = createFileRoute("/products/$productId")({
   component: RouteComponent,
@@ -118,6 +120,33 @@ function RouteComponent() {
 
   return (
     <Box w={"60%"} mx={"auto"} mt={10}>
+      <Box
+        w={"full"}
+        h={"400px"}
+        bg={"gray.100"}
+        mb={"20px"}
+        borderRadius={"10px"}
+        position={"relative"}
+        boxShadow={"0px 0px 27px -6px rgba(66, 68, 90, 0.3);"}
+        borderWidth={"1px"}
+        borderColor={"gray.300"}
+        overflow={"hidden"}
+      >
+        {/* <Center
+          color={"gray.200"}
+          top={"50%"}
+          left={"50%"}
+          position={"absolute"}
+          transform={"translate(-50%, -50%)"}
+        >
+          <FaCamera size={"50px"} />
+        </Center> */}
+        <Image
+          src={`https://picsum.photos/seed/${Math.floor(Math.random() * 100)}/1000/800/`}
+          w={"full"}
+          h={"full"}
+        />
+      </Box>
       <Box fontSize={"2xl"}>{product?.name}</Box>
       <Box fontSize={"xl"} color={"gray.400"}>
         {product?.price}$
@@ -147,7 +176,9 @@ function RouteComponent() {
               }
             />
           </Box>
-          <Button onClick={() => handleAddToCart()}>Add to cart</Button>
+          <Button onClick={() => handleAddToCart()} disabled={!session}>
+            Add to cart
+          </Button>
         </HStack>
       </Box>
       <Box
@@ -175,6 +206,7 @@ function RouteComponent() {
           p={"10px"}
           borderRadius={"10px"}
           position={"relative"}
+          background={"white"}
         >
           <Box fontSize={"xs"} color={"gray.300"}>
             {comment.username}
@@ -196,22 +228,24 @@ function RouteComponent() {
             )}
         </Box>
       ))}
-      <Box mt={"20px"}>
-        <Box color={"gray.400"} fontSize={"sm"}>
-          Your review
+      {session && (
+        <Box mt={"20px"}>
+          <Box color={"gray.400"} fontSize={"sm"}>
+            Your review
+          </Box>
+          <Textarea
+            onChange={(e) => setComment(e.target.value)}
+            value={comment}
+          />
+          <Button
+            mt={"10px"}
+            loading={isPending}
+            onClick={() => handlePostComment()}
+          >
+            Submit
+          </Button>
         </Box>
-        <Textarea
-          onChange={(e) => setComment(e.target.value)}
-          value={comment}
-        />
-        <Button
-          mt={"10px"}
-          loading={isPending}
-          onClick={() => handlePostComment()}
-        >
-          Submit
-        </Button>
-      </Box>
+      )}
     </Box>
   );
 }

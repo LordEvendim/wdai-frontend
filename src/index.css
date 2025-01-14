@@ -21,4 +21,6 @@ body {
   display: flex;
 
   min-height: 100vh;
+
+  background-image: url("./assets/background2.png") !important;
 }

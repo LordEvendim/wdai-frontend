@@ -1,7 +1,8 @@
-import { API_URL } from "@/utils/api";
-import { QueryKey } from "@/utils/query";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
+
+import { API_URL } from "@/utils/api";
+import { QueryKey } from "@/utils/query";
 
 interface FetchParams {
   prodcutId: number;
@@ -20,7 +21,7 @@ export const useDeleteComment = () => {
   const { mutate, isPending } = useMutation({
     mutationFn: deleteComment,
     onSuccess: (data) => {
-      queryClient.resetQueries({
+      void queryClient.resetQueries({
         queryKey: [QueryKey.Comments, data.prodcutId],
       });
     },
