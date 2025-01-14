@@ -1,11 +1,13 @@
+import { Box, HStack, Separator } from "@chakra-ui/react";
+import { createLazyFileRoute, useNavigate } from "@tanstack/react-router";
+import { useEffect } from "react";
+import { IoMdTrash } from "react-icons/io";
+
 import { Button } from "@/components/ui/button";
 import { toaster } from "@/components/ui/toaster";
 import { useCreateOrder } from "@/hooks/api/useCreateOrder";
 import { useSession } from "@/hooks/api/useSession";
 import { useCart } from "@/hooks/useCart";
-import { Box, HStack, Separator } from "@chakra-ui/react";
-import { createLazyFileRoute } from "@tanstack/react-router";
-import { IoMdTrash } from "react-icons/io";
 
 export const Route = createLazyFileRoute("/cart")({
   component: RouteComponent,
@@ -16,6 +18,13 @@ function RouteComponent() {
   const removeItem = useCart((state) => state.removeItem);
   const { createOrder, isPending } = useCreateOrder();
   const { session } = useSession();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!session) {
+      void navigate({ to: "/login" });
+    }
+  });
 
   const handleCreateOrder = () => {
     if (!session) {
